@@ -61,7 +61,6 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
 
             <div className={`domain-grid ${layerDomains.length === 1 ? 'single' : ''}`}>
               {layerDomains.map((domain) => {
-                const progress = user.domainProgress[domain.id];
                 const qCount = domainQuestionCounts[domain.id] ?? 0;
 
                 return (
@@ -72,7 +71,7 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
                       onNavigate({
                         type: 'quiz',
                         domainId: domain.id,
-                        level: progress?.unlockedLevel ?? 1,
+                        level: 1,
                       })
                     }
                   >
@@ -84,21 +83,23 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
                     <p className="card-desc">{domain.description}</p>
 
                     {(() => {
-                      const stats = progress?.levelStats ?? {};
-                      const correctSum = Object.values(stats).reduce((s, v) => s + v.correct, 0);
-                      const isComplete = qCount > 0 && correctSum >= qCount;
+                      const domainQs = getQuestionsByDomain(questions, domain.id);
+                      const correctCount = domainQs.filter(
+                        (q) => user.cards[q.id]?.lastQuality === 5,
+                      ).length;
+                      const isComplete = qCount > 0 && correctCount >= qCount;
                       return (
                         <div className="card-segments">
                           <div className="card-segments-bar">
                             {Array.from({ length: qCount }, (_, i) => (
                               <span
                                 key={i}
-                                className={`card-seg ${i < correctSum ? 'filled' : ''}`}
+                                className={`card-seg ${i < correctCount ? 'filled' : ''}`}
                               />
                             ))}
                           </div>
                           <span className={`card-segments-label ${isComplete ? 'complete' : ''}`}>
-                            {isComplete ? 'COMPLETE' : `${correctSum}/${qCount}`}
+                            {isComplete ? 'COMPLETE' : `${correctCount}/${qCount}`}
                           </span>
                         </div>
                       );
