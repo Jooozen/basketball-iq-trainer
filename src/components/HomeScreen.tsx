@@ -86,21 +86,20 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
                     {(() => {
                       const stats = progress?.levelStats ?? {};
                       const correctSum = Object.values(stats).reduce((s, v) => s + v.correct, 0);
-                      const totalSum = Object.values(stats).reduce((s, v) => s + v.total, 0);
-                      if (totalSum === 0) return null;
-                      const pct = Math.round((correctSum / totalSum) * 100);
+                      const isComplete = qCount > 0 && correctSum >= qCount;
                       return (
-                        <div className="card-progress">
-                          <div className="card-progress-header">
-                            <span className="card-progress-score">{correctSum}/{totalSum}</span>
-                            <span className="card-progress-pct">{pct}%</span>
+                        <div className="card-segments">
+                          <div className="card-segments-bar">
+                            {Array.from({ length: qCount }, (_, i) => (
+                              <span
+                                key={i}
+                                className={`card-seg ${i < correctSum ? 'filled' : ''}`}
+                              />
+                            ))}
                           </div>
-                          <div className="card-progress-bar">
-                            <div
-                              className="card-progress-fill"
-                              style={{ width: `${pct}%` }}
-                            />
-                          </div>
+                          <span className={`card-segments-label ${isComplete ? 'complete' : ''}`}>
+                            {isComplete ? 'COMPLETE' : `${correctSum}/${qCount}`}
+                          </span>
                         </div>
                       );
                     })()}
