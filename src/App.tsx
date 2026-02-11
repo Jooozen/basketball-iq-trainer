@@ -41,12 +41,20 @@ function App() {
     );
   }
 
+  const isHome = state.screen.type === 'home';
+
   function renderScreen() {
     const { screen } = state;
 
     switch (screen.type) {
       case 'home':
-        return <HomeScreen user={state.user} onNavigate={navigate} />;
+        return (
+          <HomeScreen
+            user={state.user}
+            questions={questions}
+            onNavigate={navigate}
+          />
+        );
 
       case 'quiz':
         return (
@@ -89,7 +97,7 @@ function App() {
 
   return (
     <div className="app">
-      <Header screen={state.screen} onNavigate={navigate} />
+      {!isHome && <Header screen={state.screen} onNavigate={navigate} />}
       <main className="app-main">{renderScreen()}</main>
     </div>
   );
