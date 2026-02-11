@@ -36,6 +36,26 @@ function appReducer(state: AppState, action: AppAction): AppState {
       };
     }
 
+    case 'UPDATE_LEVEL_STATS': {
+      const dp = state.user.domainProgress[action.domainId];
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          domainProgress: {
+            ...state.user.domainProgress,
+            [action.domainId]: {
+              ...dp,
+              levelStats: {
+                ...dp.levelStats,
+                [action.level]: { correct: action.correct, total: action.total },
+              },
+            },
+          },
+        },
+      };
+    }
+
     case 'RESET_PROGRESS':
       return {
         ...state,
@@ -74,22 +94,9 @@ export function useAppState() {
   );
 
   const updateLevelStats = useCallback(
-    (domainId: DomainId, level: number, correct: number, total: number) => {
-      // Update level stats directly
-      const dp = state.user.domainProgress[domainId];
-      const newStats = {
-        ...dp.levelStats,
-        [level]: { correct, total },
-      };
-      saveUserState({
-        ...state.user,
-        domainProgress: {
-          ...state.user.domainProgress,
-          [domainId]: { ...dp, levelStats: newStats },
-        },
-      });
-    },
-    [state.user],
+    (domainId: DomainId, level: number, correct: number, total: number) =>
+      dispatch({ type: 'UPDATE_LEVEL_STATS', domainId, level, correct, total }),
+    [],
   );
 
   const unlockLevel = useCallback(

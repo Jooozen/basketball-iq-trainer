@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import type { DomainId, Screen, UserState } from '../types';
 import { getDomainById, domains } from '../data/domains';
 
@@ -9,6 +10,7 @@ interface Props {
   user: UserState;
   onNavigate: (screen: Screen) => void;
   onUnlockLevel: (domainId: DomainId, level: number) => void;
+  onUpdateStats: (domainId: DomainId, level: number, correct: number, total: number) => void;
 }
 
 const PASS_THRESHOLD = 0.7;
@@ -26,6 +28,7 @@ export function ResultScreen({
   user,
   onNavigate,
   onUnlockLevel,
+  onUpdateStats,
 }: Props) {
   const domain = getDomainById(domainId);
   const rate = total > 0 ? correct / total : 0;
@@ -34,6 +37,10 @@ export function ResultScreen({
   const canUnlockNext = passed && level >= currentUnlocked && level < (domain?.levels ?? 3);
   const isLastLevel = level >= (domain?.levels ?? 3);
   const nextDomain = getNextDomain(domainId);
+
+  useEffect(() => {
+    onUpdateStats(domainId, level, correct, total);
+  }, [domainId, level, correct, total, onUpdateStats]);
 
   function handleUnlockNext() {
     onUnlockLevel(domainId, level + 1);

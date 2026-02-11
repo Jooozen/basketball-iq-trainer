@@ -84,4 +84,5 @@ export type AppAction =
   | { type: 'NAVIGATE'; screen: Screen }
   | { type: 'ANSWER_QUESTION'; questionId: string; quality: number }
   | { type: 'UNLOCK_LEVEL'; domainId: DomainId; level: number }
+  | { type: 'UPDATE_LEVEL_STATS'; domainId: DomainId; level: number; correct: number; total: number }
   | { type: 'RESET_PROGRESS' };
