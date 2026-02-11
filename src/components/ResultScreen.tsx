@@ -1,5 +1,5 @@
 import type { DomainId, Screen, UserState } from '../types';
-import { getDomainById } from '../data/domains';
+import { getDomainById, domains } from '../data/domains';
 
 interface Props {
   domainId: DomainId;
@@ -12,6 +12,11 @@ interface Props {
 }
 
 const PASS_THRESHOLD = 0.7;
+
+function getNextDomain(currentId: DomainId) {
+  const idx = domains.findIndex((d) => d.id === currentId);
+  return idx >= 0 && idx < domains.length - 1 ? domains[idx + 1] : null;
+}
 
 export function ResultScreen({
   domainId,
@@ -27,10 +32,18 @@ export function ResultScreen({
   const passed = rate >= PASS_THRESHOLD;
   const currentUnlocked = user.domainProgress[domainId]?.unlockedLevel ?? 1;
   const canUnlockNext = passed && level >= currentUnlocked && level < (domain?.levels ?? 3);
+  const isLastLevel = level >= (domain?.levels ?? 3);
+  const nextDomain = getNextDomain(domainId);
 
   function handleUnlockNext() {
     onUnlockLevel(domainId, level + 1);
     onNavigate({ type: 'quiz', domainId, level: level + 1 });
+  }
+
+  function handleNextSection() {
+    if (!nextDomain) return;
+    const nextLevel = user.domainProgress[nextDomain.id]?.unlockedLevel ?? 1;
+    onNavigate({ type: 'quiz', domainId: nextDomain.id, level: nextLevel });
   }
 
   return (
@@ -66,12 +79,27 @@ export function ResultScreen({
             </button>
           )}
 
+          {passed && isLastLevel && nextDomain && (
+            <button className="btn-primary" onClick={handleNextSection}>
+              {nextDomain.icon} 次のセクション「{nextDomain.name}」へ →
+            </button>
+          )}
+
           <button
             className="btn-secondary"
             onClick={() => onNavigate({ type: 'quiz', domainId, level })}
           >
             もう一度挑戦
           </button>
+
+          {nextDomain && !(passed && isLastLevel) && (
+            <button
+              className="btn-secondary"
+              onClick={handleNextSection}
+            >
+              {nextDomain.icon} 次のセクションへ進む
+            </button>
+          )}
 
           <button
             className="btn-text"
