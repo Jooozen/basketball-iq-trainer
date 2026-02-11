@@ -3,12 +3,12 @@ import type { UserState, DomainId } from '../types';
 const STORAGE_KEY = 'basketball-iq-trainer';
 
 const DOMAIN_IDS: DomainId[] = [
-  'basic-logic',
-  'decision-making',
-  'team-tactics',
-  'risk-management',
+  'fundamentals',
+  'decision',
+  'team_tactics',
+  'risk',
   'communication',
-  'game-reading',
+  'game_reading',
 ];
 
 export function createDefaultUserState(): UserState {

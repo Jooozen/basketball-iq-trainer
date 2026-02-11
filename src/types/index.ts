@@ -1,12 +1,12 @@
 // ── Domain & Layer Types ─────────────────────────────────────
 
 export type DomainId =
-  | 'basic-logic'
-  | 'decision-making'
-  | 'team-tactics'
-  | 'risk-management'
+  | 'fundamentals'
+  | 'decision'
+  | 'team_tactics'
+  | 'risk'
   | 'communication'
-  | 'game-reading';
+  | 'game_reading';
 
 export type LayerId = 'foundation' | 'execution' | 'connection' | 'integration';
 

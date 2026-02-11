@@ -1,5 +1,51 @@
 import type { Question, DomainId } from '../types';
 
+interface V2Question {
+  id: string;
+  question: string;
+  choices: string[];
+  answer: number;
+  explanation: string;
+}
+
+interface V2Category {
+  id: string;
+  layer: number;
+  name: string;
+  icon: string;
+  description: string;
+  questions: V2Question[];
+}
+
+interface V2Data {
+  meta: { title: string; version: string; description: string };
+  categories: V2Category[];
+}
+
+function assignLevel(index: number, total: number): number {
+  const perLevel = Math.ceil(total / 3);
+  return Math.min(3, Math.floor(index / perLevel) + 1);
+}
+
+function transformV2(data: V2Data): Question[] {
+  const questions: Question[] = [];
+  for (const cat of data.categories) {
+    const total = cat.questions.length;
+    cat.questions.forEach((q, i) => {
+      questions.push({
+        id: q.id,
+        domainId: cat.id as DomainId,
+        level: assignLevel(i, total),
+        text: q.question,
+        choices: q.choices,
+        correctIndex: q.answer,
+        explanation: q.explanation,
+      });
+    });
+  }
+  return questions;
+}
+
 let cachedQuestions: Question[] | null = null;
 
 export async function loadQuestions(): Promise<Question[]> {
@@ -7,7 +53,14 @@ export async function loadQuestions(): Promise<Question[]> {
 
   const res = await fetch('/questions.json');
   if (!res.ok) throw new Error('Failed to load questions');
-  cachedQuestions = (await res.json()) as Question[];
+  const raw = await res.json();
+
+  // Support both v2 (categories) and v1 (flat array) formats
+  if (raw.categories) {
+    cachedQuestions = transformV2(raw as V2Data);
+  } else {
+    cachedQuestions = raw as Question[];
+  }
   return cachedQuestions;
 }
 
