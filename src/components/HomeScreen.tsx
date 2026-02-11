@@ -82,6 +82,28 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
                     </div>
                     <h3 className="card-name">{domain.name}</h3>
                     <p className="card-desc">{domain.description}</p>
+
+                    {(() => {
+                      const stats = progress?.levelStats ?? {};
+                      const correctSum = Object.values(stats).reduce((s, v) => s + v.correct, 0);
+                      const totalSum = Object.values(stats).reduce((s, v) => s + v.total, 0);
+                      if (totalSum === 0) return null;
+                      const pct = Math.round((correctSum / totalSum) * 100);
+                      return (
+                        <div className="card-progress">
+                          <div className="card-progress-header">
+                            <span className="card-progress-score">{correctSum}/{totalSum}</span>
+                            <span className="card-progress-pct">{pct}%</span>
+                          </div>
+                          <div className="card-progress-bar">
+                            <div
+                              className="card-progress-fill"
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </button>
                 );
               })}
