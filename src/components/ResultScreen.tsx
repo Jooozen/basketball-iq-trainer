@@ -32,7 +32,6 @@ export function ResultScreen({
   const passed = rate >= PASS_THRESHOLD;
   const currentUnlocked = user.domainProgress[domainId]?.unlockedLevel ?? 1;
   const canUnlockNext = passed && level >= currentUnlocked && level < (domain?.levels ?? 3);
-  const isLastLevel = level >= (domain?.levels ?? 3);
   const nextDomain = getNextDomain(domainId);
 
   function handleUnlockNext() {
@@ -79,9 +78,12 @@ export function ResultScreen({
             </button>
           )}
 
-          {passed && isLastLevel && nextDomain && (
-            <button className="btn-primary" onClick={handleNextSection}>
-              {nextDomain.icon} 次のセクション「{nextDomain.name}」へ →
+          {nextDomain && (
+            <button
+              className={canUnlockNext ? 'btn-secondary' : 'btn-primary'}
+              onClick={handleNextSection}
+            >
+              次のセクション「{nextDomain.name}」へ →
             </button>
           )}
 
@@ -91,15 +93,6 @@ export function ResultScreen({
           >
             もう一度挑戦
           </button>
-
-          {nextDomain && !(passed && isLastLevel) && (
-            <button
-              className="btn-secondary"
-              onClick={handleNextSection}
-            >
-              {nextDomain.icon} 次のセクションへ進む
-            </button>
-          )}
 
           <button
             className="btn-text"
