@@ -16,12 +16,12 @@ export function Header({ screen, onNavigate }: Props) {
             className="btn-back"
             onClick={() => onNavigate({ type: 'home' })}
           >
-            ← 戻る
+            ← Back
           </button>
         )}
       </div>
       <h1 className="header-title" onClick={() => onNavigate({ type: 'home' })}>
-        🏀 Basketball IQ Trainer
+        Basketball <span className="title-accent">IQ</span>
       </h1>
       <div className="header-right">
         {isHome && (

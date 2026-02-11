@@ -1,68 +1,72 @@
-// ── Domain & Question Types ──────────────────────────────────────
+// ── Domain & Layer Types ─────────────────────────────────────
 
 export type DomainId =
   | 'basic-logic'
   | 'decision-making'
   | 'team-tactics'
   | 'risk-management'
-  | 'situational-judgment';
+  | 'communication'
+  | 'game-reading';
+
+export type LayerId = 'foundation' | 'execution' | 'connection' | 'integration';
+
+export interface Layer {
+  id: LayerId;
+  number: number;
+  name: string;
+  subtitle: string;
+  description: string;
+  domainIds: DomainId[];
+}
 
 export interface Domain {
   id: DomainId;
+  layerId: LayerId;
   name: string;
   description: string;
   icon: string;
-  levels: number; // total levels available (1-3)
+  levels: number;
 }
+
+// ── Question Types ──────────────────────────────────────────
 
 export interface Question {
   id: string;
   domainId: DomainId;
-  level: number; // 1 | 2 | 3
+  level: number;
   text: string;
   choices: string[];
   correctIndex: number;
   explanation: string;
-  /** Tags for cross-referencing concepts */
   tags?: string[];
 }
 
-// ── Spaced Repetition (SM-2) Types ──────────────────────────────
+// ── Spaced Repetition (SM-2) Types ──────────────────────────
 
 export interface CardState {
   questionId: string;
-  /** Easiness Factor (minimum 1.3) */
   ef: number;
-  /** Current interval in days */
   interval: number;
-  /** Number of consecutive correct answers */
   repetition: number;
-  /** Next scheduled review date (ISO string) */
   nextReview: string;
-  /** Last answer quality (0-5) */
   lastQuality: number;
 }
 
-// ── User Progress Types ─────────────────────────────────────────
+// ── User Progress Types ─────────────────────────────────────
 
 export interface DomainProgress {
   domainId: DomainId;
-  /** Highest unlocked level (starts at 1) */
   unlockedLevel: number;
-  /** Correct / total per level */
   levelStats: Record<number, { correct: number; total: number }>;
 }
 
 export interface UserState {
-  /** Per-question spaced repetition state */
   cards: Record<string, CardState>;
-  /** Per-domain progress */
   domainProgress: Record<DomainId, DomainProgress>;
-  /** Timestamp of last session */
   lastSessionDate: string;
 }
 
-// ── App State & Actions ─────────────────────────────────────────
+// ── App State & Actions ─────────────────────────────────────
 
 export type Screen =
   | { type: 'home' }

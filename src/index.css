@@ -1,31 +1,62 @@
-/* ── CSS Variables ─────────────────────────────────────────── */
+/* ── NBA-inspired Color Scheme ─────────────────────────────── */
 :root {
-  --color-bg: #f5f5f7;
-  --color-surface: #ffffff;
-  --color-border: #e5e5ea;
-  --color-text: #1d1d1f;
-  --color-text-secondary: #6e6e73;
-  --color-primary: #e85d04;
-  --color-primary-soft: rgba(232, 93, 4, 0.08);
-  --color-success: #34c759;
-  --color-success-soft: rgba(52, 199, 89, 0.1);
-  --color-error: #ff3b30;
-  --color-error-soft: rgba(255, 59, 48, 0.1);
+  /* Dark theme by default — arena atmosphere */
+  --color-bg: #0c1220;
+  --color-surface: #162033;
+  --color-surface-raised: #1d2a42;
+  --color-border: #2a3a55;
+  --color-text: #f0f2f5;
+  --color-text-secondary: #8b99b0;
+  --color-primary: #c9082a;        /* NBA Red */
+  --color-primary-hover: #e0102f;
+  --color-primary-soft: rgba(201, 8, 42, 0.15);
+  --color-accent: #1d428a;         /* NBA Blue */
+  --color-accent-soft: rgba(29, 66, 138, 0.2);
+  --color-success: #17c964;
+  --color-success-soft: rgba(23, 201, 100, 0.15);
+  --color-error: #f31260;
+  --color-error-soft: rgba(243, 18, 96, 0.15);
+  --color-gold: #fdb927;           /* NBA Gold / Lakers */
+  --color-gold-soft: rgba(253, 185, 39, 0.12);
+
+  /* Layer accent colors */
+  --layer-1: #1d428a;
+  --layer-1-soft: rgba(29, 66, 138, 0.18);
+  --layer-2: #c9082a;
+  --layer-2-soft: rgba(201, 8, 42, 0.15);
+  --layer-3: #fdb927;
+  --layer-3-soft: rgba(253, 185, 39, 0.12);
+  --layer-4: #17c964;
+  --layer-4-soft: rgba(23, 201, 100, 0.12);
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --color-bg: #1c1c1e;
-    --color-surface: #2c2c2e;
-    --color-border: #3a3a3c;
-    --color-text: #f5f5f7;
-    --color-text-secondary: #98989d;
-    --color-primary: #ff8c42;
-    --color-primary-soft: rgba(255, 140, 66, 0.12);
-    --color-success: #30d158;
-    --color-success-soft: rgba(48, 209, 88, 0.15);
-    --color-error: #ff453a;
-    --color-error-soft: rgba(255, 69, 58, 0.15);
+    --color-bg: #f2f3f7;
+    --color-surface: #ffffff;
+    --color-surface-raised: #ffffff;
+    --color-border: #dde1e8;
+    --color-text: #0c1220;
+    --color-text-secondary: #5a6578;
+    --color-primary: #c9082a;
+    --color-primary-hover: #a8061f;
+    --color-primary-soft: rgba(201, 8, 42, 0.08);
+    --color-accent: #1d428a;
+    --color-accent-soft: rgba(29, 66, 138, 0.08);
+    --color-success: #12a150;
+    --color-success-soft: rgba(18, 161, 80, 0.1);
+    --color-error: #d60a47;
+    --color-error-soft: rgba(214, 10, 71, 0.08);
+    --color-gold: #d9960a;
+    --color-gold-soft: rgba(217, 150, 10, 0.08);
+    --layer-1: #1d428a;
+    --layer-1-soft: rgba(29, 66, 138, 0.08);
+    --layer-2: #c9082a;
+    --layer-2-soft: rgba(201, 8, 42, 0.08);
+    --layer-3: #d9960a;
+    --layer-3-soft: rgba(217, 150, 10, 0.08);
+    --layer-4: #12a150;
+    --layer-4-soft: rgba(18, 161, 80, 0.08);
   }
 }
 
@@ -59,7 +90,7 @@ button {
 
 /* ── App Layout ───────────────────────────────────────────── */
 .app {
-  max-width: 480px;
+  max-width: 520px;
   margin: 0 auto;
   min-height: 100dvh;
   background: var(--color-bg);

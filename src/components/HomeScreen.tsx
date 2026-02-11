@@ -1,4 +1,4 @@
-import { domains } from '../data/domains';
+import { domains, layers } from '../data/domains';
 import type { Screen, UserState } from '../types';
 import { getDueCards } from '../lib/spaced-repetition';
 
@@ -25,50 +25,61 @@ export function HomeScreen({ user, onNavigate }: Props) {
         </button>
       )}
 
-      <h2 className="section-title">ドメインを選択</h2>
+      {layers.map((layer) => {
+        const layerDomains = domains.filter((d) =>
+          layer.domainIds.includes(d.id),
+        );
 
-      <div className="domain-grid">
-        {domains.map((domain) => {
-          const progress = user.domainProgress[domain.id];
-          const stats = progress?.levelStats ?? {};
-          const totalCorrect = Object.values(stats).reduce(
-            (s, v) => s + v.correct,
-            0,
-          );
-          const totalAnswered = Object.values(stats).reduce(
-            (s, v) => s + v.total,
-            0,
-          );
-
-          return (
-            <button
-              key={domain.id}
-              className="domain-card"
-              onClick={() =>
-                onNavigate({
-                  type: 'quiz',
-                  domainId: domain.id,
-                  level: progress?.unlockedLevel ?? 1,
-                })
-              }
-            >
-              <span className="domain-icon">{domain.icon}</span>
-              <h3 className="domain-name">{domain.name}</h3>
-              <p className="domain-desc">{domain.description}</p>
-              <div className="domain-meta">
-                <span className="domain-level">
-                  Lv.{progress?.unlockedLevel ?? 1} / {domain.levels}
-                </span>
-                {totalAnswered > 0 && (
-                  <span className="domain-accuracy">
-                    正答率 {Math.round((totalCorrect / totalAnswered) * 100)}%
-                  </span>
-                )}
+        return (
+          <div
+            key={layer.id}
+            className="layer-section"
+            data-layer={layer.number}
+          >
+            <div className="layer-header">
+              <div className="layer-number">{layer.number}</div>
+              <div className="layer-info">
+                <div className="layer-name">
+                  {layer.name}
+                </div>
+                <div className="layer-subtitle">{layer.subtitle}</div>
               </div>
-            </button>
-          );
-        })}
-      </div>
+            </div>
+
+            <div className="layer-domains">
+              {layerDomains.map((domain) => {
+                const progress = user.domainProgress[domain.id];
+
+                return (
+                  <button
+                    key={domain.id}
+                    className="domain-card"
+                    onClick={() =>
+                      onNavigate({
+                        type: 'quiz',
+                        domainId: domain.id,
+                        level: progress?.unlockedLevel ?? 1,
+                      })
+                    }
+                  >
+                    <span className="domain-icon">{domain.icon}</span>
+                    <div className="domain-body">
+                      <h3 className="domain-name">{domain.name}</h3>
+                      <p className="domain-desc">{domain.description}</p>
+                    </div>
+                    <div className="domain-meta">
+                      <span className="domain-level">
+                        Lv.{progress?.unlockedLevel ?? 1}
+                      </span>
+                      <span className="domain-arrow">›</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

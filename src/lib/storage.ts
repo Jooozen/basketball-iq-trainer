@@ -7,7 +7,8 @@ const DOMAIN_IDS: DomainId[] = [
   'decision-making',
   'team-tactics',
   'risk-management',
-  'situational-judgment',
+  'communication',
+  'game-reading',
 ];
 
 export function createDefaultUserState(): UserState {
@@ -30,7 +31,18 @@ export function loadUserState(): UserState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      return JSON.parse(raw) as UserState;
+      const parsed = JSON.parse(raw) as UserState;
+      // Ensure new domains exist in saved state
+      for (const id of DOMAIN_IDS) {
+        if (!parsed.domainProgress[id]) {
+          parsed.domainProgress[id] = {
+            domainId: id,
+            unlockedLevel: 1,
+            levelStats: {},
+          };
+        }
+      }
+      return parsed;
     }
   } catch {
     // Corrupted data — start fresh
