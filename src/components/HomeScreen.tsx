@@ -41,18 +41,16 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
         </p>
       </div>
 
-      {/* 復習セクション — centered above layers */}
-      <div className="review-section-center">
-        <button
-          className="review-section-card"
-          onClick={() => onNavigate({ type: 'mistake-review', mode: 'all-incorrect' })}
-          disabled={reviewCount === 0}
-        >
-          <span className="review-section-icon">📖</span>
-          <span className="review-section-label">復習</span>
-          <span className="review-section-count">{reviewCount}問</span>
-        </button>
-      </div>
+      {/* 復習セクション */}
+      <button
+        className="review-section-bar"
+        onClick={() => onNavigate({ type: 'mistake-review', mode: 'all-incorrect' })}
+        disabled={reviewCount === 0}
+      >
+        <span className="review-section-icon">📖</span>
+        <span className="review-section-label">復習</span>
+        <span className="review-section-count">{reviewCount}問</span>
+      </button>
 
       {/* Review Banner (spaced repetition) */}
       {dueCards.length > 0 && (
