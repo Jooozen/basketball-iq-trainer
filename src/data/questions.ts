@@ -27,18 +27,34 @@ function assignLevel(index: number, total: number): number {
   return Math.min(3, Math.floor(index / perLevel) + 1);
 }
 
+/** Fisher-Yates shuffle for choice order randomization */
+function shuffleChoices(
+  choices: string[],
+  correctIndex: number,
+): { choices: string[]; correctIndex: number } {
+  const indices = choices.map((_, i) => i);
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+  const shuffled = indices.map((i) => choices[i]);
+  const newCorrectIndex = indices.indexOf(correctIndex);
+  return { choices: shuffled, correctIndex: newCorrectIndex };
+}
+
 function transformV2(data: V2Data): Question[] {
   const questions: Question[] = [];
   for (const cat of data.categories) {
     const total = cat.questions.length;
     cat.questions.forEach((q, i) => {
+      const { choices, correctIndex } = shuffleChoices(q.choices, q.answer);
       questions.push({
         id: q.id,
         domainId: cat.id as DomainId,
         level: assignLevel(i, total),
         text: q.question,
-        choices: q.choices,
-        correctIndex: q.answer,
+        choices,
+        correctIndex,
         explanation: q.explanation,
       });
     });
