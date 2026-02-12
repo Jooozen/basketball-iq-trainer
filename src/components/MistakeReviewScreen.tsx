@@ -17,18 +17,26 @@ export function MistakeReviewScreen({
   onNavigate,
 }: Props) {
   const reviewQuestions = useMemo(() => {
+    let filtered: Question[];
     if (mode === 'unsolved') {
-      // Questions that are still incorrect (lastQuality < 3)
-      return questions.filter((q) => {
+      filtered = questions.filter((q) => {
         const card = user.cards[q.id];
         return card && card.lastQuality < 3;
       });
+    } else {
+      filtered = questions.filter((q) => {
+        const card = user.cards[q.id];
+        return card?.wasEverIncorrect;
+      });
     }
-    // All questions that were ever incorrect
-    return questions.filter((q) => {
-      const card = user.cards[q.id];
-      return card?.wasEverIncorrect;
-    });
+    // Fisher-Yates shuffle for random order each time
+    const shuffled = [...filtered];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, user.cards, questions]);
 
   const [currentIndex, setCurrentIndex] = useState(0);

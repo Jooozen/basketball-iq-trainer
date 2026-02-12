@@ -22,17 +22,12 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
     return counts;
   }, [questions]);
 
-  // Count mistakes for the review section badge
-  const mistakeCounts = useMemo(() => {
-    const unsolved = questions.filter((q) => {
-      const card = user.cards[q.id];
-      return card && card.lastQuality < 3;
-    }).length;
-    const allIncorrect = questions.filter((q) => {
+  // Count ever-incorrect questions for the review section
+  const reviewCount = useMemo(() => {
+    return questions.filter((q) => {
       const card = user.cards[q.id];
       return card?.wasEverIncorrect;
     }).length;
-    return { unsolved, allIncorrect, total: Math.max(unsolved, allIncorrect) };
   }, [user.cards, questions]);
 
   return (
@@ -46,22 +41,18 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
         </p>
       </div>
 
-      {/* Review Section - 復習セクション */}
-      {mistakeCounts.total > 0 && (
+      {/* 復習セクション — centered above layers */}
+      <div className="review-section-center">
         <button
-          className="review-section-banner"
-          onClick={() => onNavigate({ type: 'review-select' })}
+          className="review-section-card"
+          onClick={() => onNavigate({ type: 'mistake-review', mode: 'all-incorrect' })}
+          disabled={reviewCount === 0}
         >
           <span className="review-section-icon">📖</span>
-          <span className="review-section-text">
-            <strong>復習セクション</strong>
-            <span className="review-section-detail">
-              未正解 {mistakeCounts.unsolved}問 ・ 不正解履歴 {mistakeCounts.allIncorrect}問
-            </span>
-          </span>
-          <span className="review-arrow">→</span>
+          <span className="review-section-label">復習</span>
+          <span className="review-section-count">{reviewCount}問</span>
         </button>
-      )}
+      </div>
 
       {/* Review Banner (spaced repetition) */}
       {dueCards.length > 0 && (
