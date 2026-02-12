@@ -141,21 +141,36 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
                 );
               })}
 
-              {/* PPP Quiz Card in Layer 1 */}
+              {/* PPP Quiz Cards in Layer 1 */}
               {isFoundation && (
-                <button
-                  className="domain-card ppp-card"
-                  onClick={() => onNavigate({ type: 'ppp-quiz' })}
-                >
-                  <div className="card-top">
-                    <span className="card-icon">📊</span>
-                    <span className="card-badge ppp-badge">9種</span>
-                  </div>
-                  <h3 className="card-name">PPP期待値順序</h3>
-                  <p className="card-desc">
-                    シュートセレクションの期待値を順番に並べる
-                  </p>
-                </button>
+                <>
+                  <button
+                    className="domain-card ppp-card"
+                    onClick={() => onNavigate({ type: 'ppp-quiz', variant: 'nba' })}
+                  >
+                    <div className="card-top">
+                      <span className="card-icon">📊</span>
+                      <span className="card-badge ppp-badge">9種</span>
+                    </div>
+                    <h3 className="card-name">PPP期待値順序</h3>
+                    <p className="card-desc">
+                      NBA基準のシュート期待値を順番に並べる
+                    </p>
+                  </button>
+                  <button
+                    className="domain-card ppp-card ppp-card-jp"
+                    onClick={() => onNavigate({ type: 'ppp-quiz', variant: 'japan-hs' })}
+                  >
+                    <div className="card-top">
+                      <span className="card-icon">🏫</span>
+                      <span className="card-badge ppp-badge-jp">7種</span>
+                    </div>
+                    <h3 className="card-name">中高バスケ期待値</h3>
+                    <p className="card-desc">
+                      日本の中高における推定期待値を順番に並べる
+                    </p>
+                  </button>
+                </>
               )}
             </div>
           </div>

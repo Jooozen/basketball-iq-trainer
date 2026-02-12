@@ -76,7 +76,7 @@ export type Screen =
   | { type: 'review' }
   | { type: 'review-select' }
   | { type: 'mistake-review'; mode: 'unsolved' | 'all-incorrect' }
-  | { type: 'ppp-quiz' }
+  | { type: 'ppp-quiz'; variant: 'nba' | 'japan-hs' }
   | { type: 'progress' };
 
 export interface AppState {

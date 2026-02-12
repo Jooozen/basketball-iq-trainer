@@ -9,7 +9,7 @@ interface ShotType {
   explanation: string;
 }
 
-const SHOT_TYPES: ShotType[] = [
+const NBA_SHOT_TYPES: ShotType[] = [
   {
     id: 'rim',
     name: 'ゴール下（リム周辺）',
@@ -84,7 +84,87 @@ const SHOT_TYPES: ShotType[] = [
   },
 ];
 
+const JAPAN_HS_SHOT_TYPES: ShotType[] = [
+  {
+    id: 'jp_transition',
+    name: '速攻レイアップ',
+    ev: '推定1.10〜1.40',
+    rank: 1,
+    explanation:
+      '推定FG% 55〜70%×2点。ディフェンスが戻り切る前のレイアップは中高でも最も効率が高い。速攻の質がチーム力に直結する。',
+  },
+  {
+    id: 'jp_rim',
+    name: 'ゴール下（ハーフコート）',
+    ev: '推定1.00〜1.20',
+    rank: 2,
+    explanation:
+      '推定FG% 50〜60%×2点。ハーフコートオフェンスでのゴール下。フィジカルコンタクトが多く、リバウンドからのセカンドチャンスも含む。',
+  },
+  {
+    id: 'jp_paint',
+    name: 'ペイント内ショート',
+    ev: '推定0.80〜1.00',
+    rank: 3,
+    explanation:
+      '推定FG% 40〜50%×2点。ペイントエリア内からのフローターやショートジャンパー。ゴール下よりやや距離があるが、ドライブの選択肢として重要。',
+  },
+  {
+    id: 'jp_ft_area',
+    name: 'フリースロー付近',
+    ev: '推定0.76〜0.90',
+    rank: 4,
+    explanation:
+      '推定FG% 38〜45%×2点。フリースローライン前後からのジャンパー。中高では「エルボー」からの攻撃が多く、セットプレーの起点になりやすい。',
+  },
+  {
+    id: 'jp_midrange',
+    name: 'ミッドレンジ',
+    ev: '推定0.66〜0.80',
+    rank: 5,
+    explanation:
+      '推定FG% 33〜40%×2点。ペイント外〜3ポイントライン内のエリア。中高では3ポイントが入りにくい分、ミッドレンジの比重が高くなりがち。',
+  },
+  {
+    id: 'jp_three_elite',
+    name: '3ポイント（上位校）',
+    ev: '推定0.84〜0.99',
+    rank: 6,
+    explanation:
+      '推定FG% 28〜33%×3点。シューティング練習が充実した上位校ではミッドレンジより高い期待値になる。ただし安定感にばらつきがある。',
+  },
+  {
+    id: 'jp_three_avg',
+    name: '3ポイント（一般的）',
+    ev: '推定0.60〜0.78',
+    rank: 7,
+    explanation:
+      '推定FG% 20〜26%×3点。一般的な中高チームの3ポイント成功率。練習量や体格の問題で成功率が低く、最も効率が悪いショットになりやすい。',
+  },
+];
+
+type PPPVariant = 'nba' | 'japan-hs';
+
+const VARIANT_CONFIG: Record<
+  PPPVariant,
+  { shots: ShotType[]; title: string; headerLabel: string; badge: string }
+> = {
+  nba: {
+    shots: NBA_SHOT_TYPES,
+    title: 'NBA PPP 期待値順序クイズ',
+    headerLabel: 'PPP 期待値順序クイズ',
+    badge: '9種',
+  },
+  'japan-hs': {
+    shots: JAPAN_HS_SHOT_TYPES,
+    title: '中高バスケ 期待値順序クイズ',
+    headerLabel: '中高バスケ 期待値順序クイズ',
+    badge: '7種',
+  },
+};
+
 interface Props {
+  variant: PPPVariant;
   onNavigate: (screen: Screen) => void;
 }
 
@@ -97,13 +177,15 @@ function shuffleArray<T>(arr: T[]): T[] {
   return shuffled;
 }
 
-export function PPPQuizScreen({ onNavigate }: Props) {
-  const totalSteps = SHOT_TYPES.length;
+export function PPPQuizScreen({ variant, onNavigate }: Props) {
+  const config = VARIANT_CONFIG[variant];
+  const shotTypes = config.shots;
+  const totalSteps = shotTypes.length;
 
   // Shuffled choices for display
-  const shuffledShots = useMemo(() => shuffleArray(SHOT_TYPES), []);
+  const shuffledShots = useMemo(() => shuffleArray(shotTypes), [shotTypes]);
 
-  // Current step: 0 = "most highest", 1 = "2nd highest", ... 8 = "lowest"
+  // Current step: 0 = "most highest", 1 = "2nd highest", ... last = "lowest"
   const [currentStep, setCurrentStep] = useState(0);
   // IDs of already-selected (eliminated) shots
   const [eliminatedIds, setEliminatedIds] = useState<Set<string>>(new Set());
@@ -118,7 +200,7 @@ export function PPPQuizScreen({ onNavigate }: Props) {
 
   // The correct answer for the current step
   const correctRank = currentStep + 1;
-  const correctShot = SHOT_TYPES.find((s) => s.rank === correctRank)!;
+  const correctShot = shotTypes.find((s) => s.rank === correctRank)!;
 
   // Determine question text
   function getQuestionText(step: number, total: number): string {
@@ -157,7 +239,7 @@ export function PPPQuizScreen({ onNavigate }: Props) {
       <div className="ppp-quiz-screen">
         <div className="mistake-review-complete">
           <div className="review-complete-icon">&#x1F3C0;</div>
-          <h2 className="review-complete-title">期待値順序クイズ完了！</h2>
+          <h2 className="review-complete-title">{config.title}完了！</h2>
           <p className="review-complete-stats">
             {correctCount}/{totalSteps} 正解（{rate}%）
           </p>
@@ -177,7 +259,7 @@ export function PPPQuizScreen({ onNavigate }: Props) {
   return (
     <div className="ppp-quiz-screen">
       <div className="quiz-header">
-        <span className="quiz-domain">PPP 期待値順序クイズ</span>
+        <span className="quiz-domain">{config.headerLabel}</span>
         <span className="quiz-progress">
           {currentStep + 1} / {totalSteps}
         </span>

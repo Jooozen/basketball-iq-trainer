@@ -926,7 +926,16 @@
   background: var(--color-accent-soft);
 }
 
+.ppp-badge-jp {
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.12);
+}
+
 /* ── PPP Card styling in home grid ────────────────────────────── */
 .ppp-card {
   border-color: rgba(249, 115, 22, 0.15);
+}
+
+.ppp-card-jp {
+  border-color: rgba(59, 130, 246, 0.15);
 }

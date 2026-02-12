@@ -115,7 +115,7 @@ function App() {
         );
 
       case 'ppp-quiz':
-        return <PPPQuizScreen onNavigate={navigate} />;
+        return <PPPQuizScreen variant={screen.variant} onNavigate={navigate} />;
 
       case 'progress':
         return <ProgressScreen user={state.user} onNavigate={navigate} />;
