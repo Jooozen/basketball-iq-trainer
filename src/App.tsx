@@ -11,10 +11,29 @@ import { ReviewSelectScreen } from './components/ReviewSelectScreen';
 import { MistakeReviewScreen } from './components/MistakeReviewScreen';
 import { PPPQuizScreen } from './components/PPPQuizScreen';
 import { ProgressScreen } from './components/ProgressScreen';
+import { StudyScreen } from './components/StudyScreen';
+import { TimeAttackScreen } from './components/TimeAttackScreen';
+import { TimeAttackResultScreen } from './components/TimeAttackResultScreen';
+import { ComprehensiveTestScreen } from './components/ComprehensiveTestScreen';
+import { ComprehensiveResultScreen } from './components/ComprehensiveResultScreen';
+import { DailyChallengeScreen } from './components/DailyChallengeScreen';
+import { BadgeScreen, checkBadges } from './components/BadgeScreen';
 import './App.css';
 
 function App() {
-  const { state, navigate, answerQuestion, updateLevelStats, unlockLevel, updatePppScore } = useAppState();
+  const {
+    state,
+    navigate,
+    answerQuestion,
+    updateLevelStats,
+    unlockLevel,
+    updatePppScore,
+    setDailyChallenge,
+    completeDailyChallenge,
+    saveComprehensiveResult,
+    earnBadge,
+    updateTimeAttackBest,
+  } = useAppState();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,6 +44,15 @@ function App() {
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
+
+  // Check for new badges whenever user state changes
+  useEffect(() => {
+    if (questions.length === 0) return;
+    const newBadges = checkBadges(state.user, questions);
+    for (const badgeId of newBadges) {
+      earnBadge(badgeId);
+    }
+  }, [state.user, questions, earnBadge]);
 
   if (loading) {
     return (
@@ -125,6 +153,74 @@ function App() {
 
       case 'progress':
         return <ProgressScreen user={state.user} onNavigate={navigate} />;
+
+      case 'study':
+        return (
+          <StudyScreen
+            domainId={screen.domainId}
+            questions={questions}
+            onNavigate={navigate}
+          />
+        );
+
+      case 'time-attack':
+        return (
+          <TimeAttackScreen
+            questions={questions}
+            onAnswer={answerQuestion}
+            onNavigate={navigate}
+            onComplete={updateTimeAttackBest}
+          />
+        );
+
+      case 'time-attack-result':
+        return (
+          <TimeAttackResultScreen
+            correct={screen.correct}
+            total={screen.total}
+            avgTime={screen.avgTime}
+            user={state.user}
+            onNavigate={navigate}
+          />
+        );
+
+      case 'comprehensive-test':
+        return (
+          <ComprehensiveTestScreen
+            questions={questions}
+            onAnswer={answerQuestion}
+            onNavigate={navigate}
+            onComplete={saveComprehensiveResult}
+          />
+        );
+
+      case 'comprehensive-result':
+        return (
+          <ComprehensiveResultScreen
+            scores={screen.scores}
+            onNavigate={navigate}
+          />
+        );
+
+      case 'daily-challenge':
+        return (
+          <DailyChallengeScreen
+            user={state.user}
+            questions={questions}
+            onAnswer={answerQuestion}
+            onNavigate={navigate}
+            onSetDaily={setDailyChallenge}
+            onCompleteDaily={completeDailyChallenge}
+          />
+        );
+
+      case 'badges':
+        return (
+          <BadgeScreen
+            user={state.user}
+            onNavigate={navigate}
+          />
+        );
     }
   }
 

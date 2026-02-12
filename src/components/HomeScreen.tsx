@@ -3,6 +3,7 @@ import { domains, layers } from '../data/domains';
 import type { Question, Screen, UserState } from '../types';
 import { getDueCards } from '../lib/spaced-repetition';
 import { getQuestionsByDomain } from '../data/questions';
+import { BADGE_DEFINITIONS } from './BadgeScreen';
 
 interface Props {
   user: UserState;
@@ -30,6 +31,20 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
     }).length;
   }, [user.cards, questions]);
 
+  // Daily challenge status
+  const today = new Date().toISOString().split('T')[0];
+  const isDailyCompleted = user.dailyChallengeDate === today
+    && user.dailyChallengeResults
+    && Object.keys(user.dailyChallengeResults).length >= 5;
+  const streak = user.dailyStreak?.currentStreak ?? 0;
+
+  // Badges count
+  const earnedCount = user.earnedBadges?.length ?? 0;
+  const totalBadges = BADGE_DEFINITIONS.length;
+
+  // Time attack best
+  const taBest = user.timeAttackBest;
+
   return (
     <div className="home-screen">
       {/* Hero */}
@@ -52,6 +67,18 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
         <span className="review-section-count">{reviewCount}問</span>
       </button>
 
+      {/* タイムアタック セクション */}
+      <button
+        className="home-section-bar time-attack-bar"
+        onClick={() => onNavigate({ type: 'time-attack' })}
+      >
+        <span className="review-section-icon">⏱️</span>
+        <span className="review-section-label">タイムアタック</span>
+        <span className="review-section-count">
+          {taBest ? `Best ${taBest.correct}/${taBest.total}（${(taBest.avgTime / 1000).toFixed(1)}s）` : '5秒で即断'}
+        </span>
+      </button>
+
       {/* Review Banner (spaced repetition) */}
       {dueCards.length > 0 && (
         <button
@@ -65,6 +92,30 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
           <span className="review-arrow">→</span>
         </button>
       )}
+
+      {/* デイリーチャレンジ & 実力テスト */}
+      <div className="home-feature-grid">
+        <button
+          className={`feature-card daily-card ${isDailyCompleted ? 'feature-completed' : ''}`}
+          onClick={() => onNavigate({ type: 'daily-challenge' })}
+        >
+          <div className="feature-icon">{isDailyCompleted ? '✅' : '🌟'}</div>
+          <div className="feature-name">デイリー</div>
+          <div className="feature-meta">
+            {isDailyCompleted ? '完了!' : '5問に挑戦'}
+            {streak > 0 && <span className="streak-chip">🔥{streak}</span>}
+          </div>
+        </button>
+
+        <button
+          className="feature-card comp-card"
+          onClick={() => onNavigate({ type: 'comprehensive-test' })}
+        >
+          <div className="feature-icon">📊</div>
+          <div className="feature-name">実力テスト</div>
+          <div className="feature-meta">6領域レーダー</div>
+        </button>
+      </div>
 
       {/* Layers */}
       {layers.map((layer) => {
@@ -86,47 +137,55 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
                 const qCount = domainQuestionCounts[domain.id] ?? 0;
 
                 return (
-                  <button
-                    key={domain.id}
-                    className="domain-card"
-                    onClick={() =>
-                      onNavigate({
-                        type: 'quiz',
-                        domainId: domain.id,
-                        level: 1,
-                      })
-                    }
-                  >
-                    <div className="card-top">
-                      <span className="card-icon">{domain.icon}</span>
-                      <span className="card-badge">{qCount}Q</span>
-                    </div>
-                    <h3 className="card-name">{domain.name}</h3>
-                    <p className="card-desc">{domain.description}</p>
+                  <div key={domain.id} className="domain-card-wrapper">
+                    <button
+                      className="domain-card"
+                      onClick={() =>
+                        onNavigate({
+                          type: 'quiz',
+                          domainId: domain.id,
+                          level: 1,
+                        })
+                      }
+                    >
+                      <div className="card-top">
+                        <span className="card-icon">{domain.icon}</span>
+                        <span className="card-badge">{qCount}Q</span>
+                      </div>
+                      <h3 className="card-name">{domain.name}</h3>
+                      <p className="card-desc">{domain.description}</p>
 
-                    {(() => {
-                      const domainQs = getQuestionsByDomain(questions, domain.id);
-                      const correctCount = domainQs.filter(
-                        (q) => user.cards[q.id]?.lastQuality === 5,
-                      ).length;
-                      const isComplete = qCount > 0 && correctCount >= qCount;
-                      return (
-                        <div className="card-segments">
-                          <div className="card-segments-bar">
-                            {Array.from({ length: qCount }, (_, i) => (
-                              <span
-                                key={i}
-                                className={`card-seg ${i < correctCount ? 'filled' : ''}`}
-                              />
-                            ))}
+                      {(() => {
+                        const domainQs = getQuestionsByDomain(questions, domain.id);
+                        const correctCount = domainQs.filter(
+                          (q) => user.cards[q.id]?.lastQuality === 5,
+                        ).length;
+                        const isComplete = qCount > 0 && correctCount >= qCount;
+                        return (
+                          <div className="card-segments">
+                            <div className="card-segments-bar">
+                              {Array.from({ length: qCount }, (_, i) => (
+                                <span
+                                  key={i}
+                                  className={`card-seg ${i < correctCount ? 'filled' : ''}`}
+                                />
+                              ))}
+                            </div>
+                            <span className={`card-segments-label ${isComplete ? 'complete' : ''}`}>
+                              {isComplete ? 'COMPLETE' : `${correctCount}/${qCount}`}
+                            </span>
                           </div>
-                          <span className={`card-segments-label ${isComplete ? 'complete' : ''}`}>
-                            {isComplete ? 'COMPLETE' : `${correctCount}/${qCount}`}
-                          </span>
-                        </div>
-                      );
-                    })()}
-                  </button>
+                        );
+                      })()}
+                    </button>
+                    <button
+                      className="study-mode-btn"
+                      onClick={() => onNavigate({ type: 'study', domainId: domain.id })}
+                      title="学習モード"
+                    >
+                      📚
+                    </button>
+                  </div>
                 );
               })}
 
@@ -177,6 +236,12 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
 
       {/* Footer actions */}
       <div className="home-footer">
+        <button
+          className="btn-ghost"
+          onClick={() => onNavigate({ type: 'badges' })}
+        >
+          🏅 バッジ ({earnedCount}/{totalBadges})
+        </button>
         <button
           className="btn-ghost"
           onClick={() => onNavigate({ type: 'progress' })}
