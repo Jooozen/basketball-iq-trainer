@@ -63,6 +63,7 @@ export function updateCard(card: CardState, quality: number): CardState {
     repetition,
     nextReview: nextReview.toISOString(),
     lastQuality: q,
+    wasEverIncorrect: card.wasEverIncorrect || q < 3,
   };
 }
 

@@ -50,6 +50,7 @@ export interface CardState {
   repetition: number;
   nextReview: string;
   lastQuality: number;
+  wasEverIncorrect?: boolean;
 }
 
 // ── User Progress Types ─────────────────────────────────────
@@ -73,6 +74,9 @@ export type Screen =
   | { type: 'quiz'; domainId: DomainId; level: number }
   | { type: 'result'; domainId: DomainId; level: number; correct: number; total: number }
   | { type: 'review' }
+  | { type: 'review-select' }
+  | { type: 'mistake-review'; mode: 'unsolved' | 'all-incorrect' }
+  | { type: 'ppp-quiz' }
   | { type: 'progress' };
 
 export interface AppState {

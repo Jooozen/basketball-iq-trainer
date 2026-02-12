@@ -22,6 +22,19 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
     return counts;
   }, [questions]);
 
+  // Count mistakes for the review section badge
+  const mistakeCounts = useMemo(() => {
+    const unsolved = questions.filter((q) => {
+      const card = user.cards[q.id];
+      return card && card.lastQuality < 3;
+    }).length;
+    const allIncorrect = questions.filter((q) => {
+      const card = user.cards[q.id];
+      return card?.wasEverIncorrect;
+    }).length;
+    return { unsolved, allIncorrect, total: Math.max(unsolved, allIncorrect) };
+  }, [user.cards, questions]);
+
   return (
     <div className="home-screen">
       {/* Hero */}
@@ -33,7 +46,24 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
         </p>
       </div>
 
-      {/* Review Banner */}
+      {/* Review Section - 復習セクション */}
+      {mistakeCounts.total > 0 && (
+        <button
+          className="review-section-banner"
+          onClick={() => onNavigate({ type: 'review-select' })}
+        >
+          <span className="review-section-icon">📖</span>
+          <span className="review-section-text">
+            <strong>復習セクション</strong>
+            <span className="review-section-detail">
+              未正解 {mistakeCounts.unsolved}問 ・ 不正解履歴 {mistakeCounts.allIncorrect}問
+            </span>
+          </span>
+          <span className="review-arrow">→</span>
+        </button>
+      )}
+
+      {/* Review Banner (spaced repetition) */}
       {dueCards.length > 0 && (
         <button
           className="review-banner"
@@ -53,13 +83,16 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
           layer.domainIds.includes(d.id),
         );
 
+        // Check if this is Layer 1 (foundation) to add PPP quiz
+        const isFoundation = layer.id === 'foundation';
+
         return (
           <div key={layer.id} className="layer-section">
             <div className="layer-label">
               第{layer.number}層：{layer.name}
             </div>
 
-            <div className={`domain-grid ${layerDomains.length === 1 ? 'single' : ''}`}>
+            <div className={`domain-grid ${layerDomains.length === 1 && !isFoundation ? 'single' : ''}`}>
               {layerDomains.map((domain) => {
                 const qCount = domainQuestionCounts[domain.id] ?? 0;
 
@@ -107,6 +140,23 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
                   </button>
                 );
               })}
+
+              {/* PPP Quiz Card in Layer 1 */}
+              {isFoundation && (
+                <button
+                  className="domain-card ppp-card"
+                  onClick={() => onNavigate({ type: 'ppp-quiz' })}
+                >
+                  <div className="card-top">
+                    <span className="card-icon">📊</span>
+                    <span className="card-badge ppp-badge">9種</span>
+                  </div>
+                  <h3 className="card-name">PPP期待値順序</h3>
+                  <p className="card-desc">
+                    シュートセレクションの期待値を順番に並べる
+                  </p>
+                </button>
+              )}
             </div>
           </div>
         );

@@ -7,6 +7,9 @@ import { HomeScreen } from './components/HomeScreen';
 import { QuizScreen } from './components/QuizScreen';
 import { ResultScreen } from './components/ResultScreen';
 import { ReviewScreen } from './components/ReviewScreen';
+import { ReviewSelectScreen } from './components/ReviewSelectScreen';
+import { MistakeReviewScreen } from './components/MistakeReviewScreen';
+import { PPPQuizScreen } from './components/PPPQuizScreen';
 import { ProgressScreen } from './components/ProgressScreen';
 import './App.css';
 
@@ -90,6 +93,29 @@ function App() {
             onNavigate={navigate}
           />
         );
+
+      case 'review-select':
+        return (
+          <ReviewSelectScreen
+            user={state.user}
+            questions={questions}
+            onNavigate={navigate}
+          />
+        );
+
+      case 'mistake-review':
+        return (
+          <MistakeReviewScreen
+            mode={screen.mode}
+            user={state.user}
+            questions={questions}
+            onAnswer={answerQuestion}
+            onNavigate={navigate}
+          />
+        );
+
+      case 'ppp-quiz':
+        return <PPPQuizScreen onNavigate={navigate} />;
 
       case 'progress':
         return <ProgressScreen user={state.user} onNavigate={navigate} />;

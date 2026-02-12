@@ -651,3 +651,282 @@
 
 .btn-text:hover { color: var(--color-text); }
 .text-muted { color: var(--color-text-secondary); }
+
+/* ══════════════════════════════════════════════════════════════
+   REVIEW SECTION BANNER (Home Screen)
+   ══════════════════════════════════════════════════════════════ */
+.review-section-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.875rem 1rem;
+  margin-bottom: 0.75rem;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(99, 102, 241, 0.12));
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.review-section-banner:hover {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(99, 102, 241, 0.2));
+  border-color: rgba(139, 92, 246, 0.35);
+}
+
+.review-section-icon { font-size: 1.2rem; }
+
+.review-section-text {
+  flex: 1;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.review-section-text strong {
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
+.review-section-detail {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   REVIEW SELECT SCREEN
+   ══════════════════════════════════════════════════════════════ */
+.review-select-screen {
+  padding: 1.25rem;
+}
+
+.review-select-header {
+  text-align: center;
+  padding: 2rem 0 1.5rem;
+}
+
+.review-select-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.review-select-subtitle {
+  font-size: 0.88rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.review-select-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.review-select-card {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 1.125rem 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.12s, background 0.15s, border-color 0.15s;
+}
+
+.review-select-card:not(:disabled):hover {
+  background: var(--color-surface-hover);
+  border-color: rgba(255, 255, 255, 0.14);
+  transform: translateY(-1px);
+}
+
+.review-select-card:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.review-select-card-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--color-primary-soft);
+  flex-shrink: 0;
+}
+
+.rs-icon {
+  font-size: 1.2rem;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.review-select-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.review-select-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+.review-select-card-desc {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.review-select-card-count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.rs-count {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.rs-count-label {
+  font-size: 0.65rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.1rem;
+}
+
+.review-select-empty {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--color-text-secondary);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MISTAKE REVIEW COMPLETE
+   ══════════════════════════════════════════════════════════════ */
+.mistake-review-complete {
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+
+.review-complete-icon {
+  font-size: 3.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.review-complete-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.review-complete-stats {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 2rem;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PPP QUIZ SCREEN
+   ══════════════════════════════════════════════════════════════ */
+.ppp-quiz-screen {
+  padding: 1.25rem;
+}
+
+.ppp-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.ppp-choice-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.88rem;
+  transition: border-color 0.15s, background 0.15s, opacity 0.2s;
+}
+
+.ppp-choice-btn:not(:disabled):not(.ppp-eliminated):hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--color-surface-hover);
+}
+
+.ppp-choice-btn.correct {
+  border-color: var(--color-success);
+  background: var(--color-success-soft);
+}
+
+.ppp-choice-btn.incorrect {
+  border-color: var(--color-error);
+  background: var(--color-error-soft);
+}
+
+.ppp-choice-btn.dimmed {
+  opacity: 0.35;
+}
+
+.ppp-choice-btn.ppp-eliminated {
+  opacity: 0.3;
+  cursor: default;
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.04);
+  text-decoration: line-through;
+  text-decoration-color: rgba(255, 255, 255, 0.2);
+}
+
+.ppp-choice-name {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.ppp-eliminated-ev {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+}
+
+.ppp-answer-detail {
+  padding: 0.5rem 0;
+  margin-bottom: 0.25rem;
+}
+
+.ppp-answer-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 0.15rem;
+}
+
+.ppp-answer-ev {
+  font-size: 0.85rem;
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+/* ── PPP Card badge ───────────────────────────────────────────── */
+.ppp-badge {
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+/* ── PPP Card styling in home grid ────────────────────────────── */
+.ppp-card {
+  border-color: rgba(249, 115, 22, 0.15);
+}
