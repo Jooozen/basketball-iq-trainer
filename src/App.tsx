@@ -14,7 +14,7 @@ import { ProgressScreen } from './components/ProgressScreen';
 import './App.css';
 
 function App() {
-  const { state, navigate, answerQuestion, updateLevelStats, unlockLevel } = useAppState();
+  const { state, navigate, answerQuestion, updateLevelStats, unlockLevel, updatePppScore } = useAppState();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -115,7 +115,13 @@ function App() {
         );
 
       case 'ppp-quiz':
-        return <PPPQuizScreen variant={screen.variant} onNavigate={navigate} />;
+        return (
+          <PPPQuizScreen
+            variant={screen.variant}
+            onNavigate={navigate}
+            onComplete={updatePppScore}
+          />
+        );
 
       case 'progress':
         return <ProgressScreen user={state.user} onNavigate={navigate} />;

@@ -56,6 +56,22 @@ function appReducer(state: AppState, action: AppAction): AppState {
       };
     }
 
+    case 'UPDATE_PPP_SCORE': {
+      const prev = state.user.pppBestScores?.[action.variant];
+      // Only update if new score is better
+      if (prev && prev.correct >= action.correct) return state;
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          pppBestScores: {
+            ...state.user.pppBestScores,
+            [action.variant]: { correct: action.correct, total: action.total },
+          },
+        },
+      };
+    }
+
     case 'RESET_PROGRESS':
       return {
         ...state,
@@ -105,11 +121,18 @@ export function useAppState() {
     [],
   );
 
+  const updatePppScore = useCallback(
+    (variant: string, correct: number, total: number) =>
+      dispatch({ type: 'UPDATE_PPP_SCORE', variant, correct, total }),
+    [],
+  );
+
   return {
     state,
     navigate,
     answerQuestion,
     updateLevelStats,
     unlockLevel,
+    updatePppScore,
   };
 }

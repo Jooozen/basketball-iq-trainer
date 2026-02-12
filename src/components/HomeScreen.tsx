@@ -144,32 +144,41 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
               {/* PPP Quiz Cards in Layer 1 */}
               {isFoundation && (
                 <>
-                  <button
-                    className="domain-card ppp-card"
-                    onClick={() => onNavigate({ type: 'ppp-quiz', variant: 'nba' })}
-                  >
-                    <div className="card-top">
-                      <span className="card-icon">📊</span>
-                      <span className="card-badge ppp-badge">9種</span>
-                    </div>
-                    <h3 className="card-name">PPP期待値順序</h3>
-                    <p className="card-desc">
-                      NBA基準のシュート期待値を順番に並べる
-                    </p>
-                  </button>
-                  <button
-                    className="domain-card ppp-card ppp-card-jp"
-                    onClick={() => onNavigate({ type: 'ppp-quiz', variant: 'japan-hs' })}
-                  >
-                    <div className="card-top">
-                      <span className="card-icon">🏫</span>
-                      <span className="card-badge ppp-badge-jp">7種</span>
-                    </div>
-                    <h3 className="card-name">中高バスケ期待値</h3>
-                    <p className="card-desc">
-                      日本の中高における推定期待値を順番に並べる
-                    </p>
-                  </button>
+                  {([
+                    { variant: 'nba' as const, icon: '📊', badge: '9種', badgeClass: 'ppp-badge', cardClass: 'ppp-card', name: 'PPP期待値順序', desc: 'NBA基準のシュート期待値を順番に並べる', total: 9 },
+                    { variant: 'japan-hs' as const, icon: '🏫', badge: '7種', badgeClass: 'ppp-badge-jp', cardClass: 'ppp-card ppp-card-jp', name: '中高バスケ期待値', desc: '日本の中高における推定期待値を順番に並べる', total: 7 },
+                  ]).map((ppp) => {
+                    const score = user.pppBestScores?.[ppp.variant];
+                    const bestCorrect = score?.correct ?? 0;
+                    const isPppComplete = bestCorrect >= ppp.total;
+                    return (
+                      <button
+                        key={ppp.variant}
+                        className={`domain-card ${ppp.cardClass}`}
+                        onClick={() => onNavigate({ type: 'ppp-quiz', variant: ppp.variant })}
+                      >
+                        <div className="card-top">
+                          <span className="card-icon">{ppp.icon}</span>
+                          <span className={`card-badge ${ppp.badgeClass}`}>{ppp.badge}</span>
+                        </div>
+                        <h3 className="card-name">{ppp.name}</h3>
+                        <p className="card-desc">{ppp.desc}</p>
+                        <div className="card-segments">
+                          <div className="card-segments-bar">
+                            {Array.from({ length: ppp.total }, (_, i) => (
+                              <span
+                                key={i}
+                                className={`card-seg ${i < bestCorrect ? 'filled' : ''}`}
+                              />
+                            ))}
+                          </div>
+                          <span className={`card-segments-label ${isPppComplete ? 'complete' : ''}`}>
+                            {isPppComplete ? 'COMPLETE' : `${bestCorrect}/${ppp.total}`}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </>
               )}
             </div>

@@ -64,6 +64,7 @@ export interface DomainProgress {
 export interface UserState {
   cards: Record<string, CardState>;
   domainProgress: Record<DomainId, DomainProgress>;
+  pppBestScores?: Record<string, { correct: number; total: number }>;
   lastSessionDate: string;
 }
 
@@ -89,4 +90,5 @@ export type AppAction =
   | { type: 'ANSWER_QUESTION'; questionId: string; quality: number }
   | { type: 'UNLOCK_LEVEL'; domainId: DomainId; level: number }
   | { type: 'UPDATE_LEVEL_STATS'; domainId: DomainId; level: number; correct: number; total: number }
+  | { type: 'UPDATE_PPP_SCORE'; variant: string; correct: number; total: number }
   | { type: 'RESET_PROGRESS' };

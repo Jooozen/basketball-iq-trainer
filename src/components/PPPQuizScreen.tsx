@@ -166,6 +166,7 @@ const VARIANT_CONFIG: Record<
 interface Props {
   variant: PPPVariant;
   onNavigate: (screen: Screen) => void;
+  onComplete: (variant: string, correct: number, total: number) => void;
 }
 
 function shuffleArray<T>(arr: T[]): T[] {
@@ -177,7 +178,7 @@ function shuffleArray<T>(arr: T[]): T[] {
   return shuffled;
 }
 
-export function PPPQuizScreen({ variant, onNavigate }: Props) {
+export function PPPQuizScreen({ variant, onNavigate, onComplete }: Props) {
   const config = VARIANT_CONFIG[variant];
   const shotTypes = config.shots;
   const totalSteps = shotTypes.length;
@@ -225,6 +226,7 @@ export function PPPQuizScreen({ variant, onNavigate }: Props) {
     setEliminatedIds(newEliminated);
 
     if (currentStep + 1 >= totalSteps) {
+      onComplete(variant, correctCount, totalSteps);
       setCompleted(true);
     } else {
       setCurrentStep((s) => s + 1);
