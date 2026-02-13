@@ -31,6 +31,15 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
     }).length;
   }, [user.cards, questions]);
 
+  // Check if all domains through Layer 4 are complete (all questions answered with lastQuality === 5)
+  const allDomainsComplete = useMemo(() => {
+    return domains.every((domain) => {
+      const domainQs = getQuestionsByDomain(questions, domain.id);
+      if (domainQs.length === 0) return false;
+      return domainQs.every((q) => user.cards[q.id]?.lastQuality === 5);
+    });
+  }, [questions, user.cards]);
+
   // Daily challenge status
   const today = new Date().toISOString().split('T')[0];
   const isDailyCompleted = user.dailyChallengeDate === today
@@ -56,38 +65,44 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
         </p>
       </div>
 
-      {/* 復習セクション */}
-      <button
-        className="review-section-bar"
-        onClick={() => onNavigate({ type: 'mistake-review', mode: 'all-incorrect' })}
-        disabled={reviewCount === 0}
-      >
-        <span className="review-section-icon">📖</span>
-        <span className="review-section-label">復習</span>
-        <span className="review-section-count">{reviewCount}問</span>
-      </button>
+      {/* 復習セクション - 全領域完了後のみ表示 */}
+      {allDomainsComplete && (
+        <button
+          className="review-section-bar"
+          onClick={() => onNavigate({ type: 'mistake-review', mode: 'all-incorrect' })}
+          disabled={reviewCount === 0}
+        >
+          <span className="review-section-icon">📖</span>
+          <span className="review-section-label">復習</span>
+          <span className="review-section-count">{reviewCount}問</span>
+        </button>
+      )}
 
-      {/* タイムアタック セクション */}
-      <button
-        className="home-section-bar time-attack-bar"
-        onClick={() => onNavigate({ type: 'time-attack' })}
-      >
-        <span className="review-section-icon">⏱️</span>
-        <span className="review-section-label">タイムアタック</span>
-        <span className="review-section-count">
-          {taBest ? `Best ${taBest.correct}/${taBest.total}（${(taBest.avgTime / 1000).toFixed(1)}s）` : '5秒で即断'}
-        </span>
-      </button>
+      {/* タイムアタック セクション - 全領域完了後のみ表示 */}
+      {allDomainsComplete && (
+        <button
+          className="home-section-bar time-attack-bar"
+          onClick={() => onNavigate({ type: 'time-attack' })}
+        >
+          <span className="review-section-icon">⏱️</span>
+          <span className="review-section-label">タイムアタック</span>
+          <span className="review-section-count">
+            {taBest ? `Best ${taBest.correct}/${taBest.total}（${(taBest.avgTime / 1000).toFixed(1)}s）` : '5秒で即断'}
+          </span>
+        </button>
+      )}
 
-      {/* 学習モード セクション */}
-      <button
-        className="home-section-bar study-bar"
-        onClick={() => onNavigate({ type: 'study-select' })}
-      >
-        <span className="review-section-icon">📚</span>
-        <span className="review-section-label">学習モード</span>
-        <span className="review-section-count">問題と解説を読む</span>
-      </button>
+      {/* 学習モード セクション - 全領域完了後のみ表示 */}
+      {allDomainsComplete && (
+        <button
+          className="home-section-bar study-bar"
+          onClick={() => onNavigate({ type: 'study-select' })}
+        >
+          <span className="review-section-icon">📚</span>
+          <span className="review-section-label">学習モード</span>
+          <span className="review-section-count">問題と解説を読む</span>
+        </button>
+      )}
 
       {/* Review Banner (spaced repetition) */}
       {dueCards.length > 0 && (
@@ -103,29 +118,31 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
         </button>
       )}
 
-      {/* デイリーチャレンジ & 実力テスト */}
-      <div className="home-feature-grid">
-        <button
-          className={`feature-card daily-card ${isDailyCompleted ? 'feature-completed' : ''}`}
-          onClick={() => onNavigate({ type: 'daily-challenge' })}
-        >
-          <div className="feature-icon">{isDailyCompleted ? '✅' : '🌟'}</div>
-          <div className="feature-name">デイリー</div>
-          <div className="feature-meta">
-            {isDailyCompleted ? '完了!' : '5問に挑戦'}
-            {streak > 0 && <span className="streak-chip">🔥{streak}</span>}
-          </div>
-        </button>
+      {/* デイリーチャレンジ & 実力テスト - 全領域完了後のみ表示 */}
+      {allDomainsComplete && (
+        <div className="home-feature-grid">
+          <button
+            className={`feature-card daily-card ${isDailyCompleted ? 'feature-completed' : ''}`}
+            onClick={() => onNavigate({ type: 'daily-challenge' })}
+          >
+            <div className="feature-icon">{isDailyCompleted ? '✅' : '🌟'}</div>
+            <div className="feature-name">デイリー</div>
+            <div className="feature-meta">
+              {isDailyCompleted ? '完了!' : '5問に挑戦'}
+              {streak > 0 && <span className="streak-chip">🔥{streak}</span>}
+            </div>
+          </button>
 
-        <button
-          className="feature-card comp-card"
-          onClick={() => onNavigate({ type: 'comprehensive-test' })}
-        >
-          <div className="feature-icon">📊</div>
-          <div className="feature-name">実力テスト</div>
-          <div className="feature-meta">6領域レーダー</div>
-        </button>
-      </div>
+          <button
+            className="feature-card comp-card"
+            onClick={() => onNavigate({ type: 'comprehensive-test' })}
+          >
+            <div className="feature-icon">📊</div>
+            <div className="feature-name">実力テスト</div>
+            <div className="feature-meta">6領域レーダー</div>
+          </button>
+        </div>
+      )}
 
       {/* Layers */}
       {layers.map((layer) => {
