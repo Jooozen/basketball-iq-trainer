@@ -11,6 +11,7 @@ import { ReviewSelectScreen } from './components/ReviewSelectScreen';
 import { MistakeReviewScreen } from './components/MistakeReviewScreen';
 import { PPPQuizScreen } from './components/PPPQuizScreen';
 import { ProgressScreen } from './components/ProgressScreen';
+import { StudySelectScreen } from './components/StudySelectScreen';
 import { StudyScreen } from './components/StudyScreen';
 import { TimeAttackScreen } from './components/TimeAttackScreen';
 import { TimeAttackResultScreen } from './components/TimeAttackResultScreen';
@@ -153,6 +154,14 @@ function App() {
 
       case 'progress':
         return <ProgressScreen user={state.user} onNavigate={navigate} />;
+
+      case 'study-select':
+        return (
+          <StudySelectScreen
+            questions={questions}
+            onNavigate={navigate}
+          />
+        );
 
       case 'study':
         return (

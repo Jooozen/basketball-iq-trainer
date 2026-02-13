@@ -112,6 +112,7 @@ export type Screen =
   | { type: 'mistake-review'; mode: 'unsolved' | 'all-incorrect' }
   | { type: 'ppp-quiz'; variant: 'nba' | 'japan-hs' }
   | { type: 'progress' }
+  | { type: 'study-select' }
   | { type: 'study'; domainId: DomainId }
   | { type: 'time-attack' }
   | { type: 'time-attack-result'; correct: number; total: number; avgTime: number }

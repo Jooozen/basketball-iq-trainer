@@ -79,6 +79,16 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
         </span>
       </button>
 
+      {/* 学習モード セクション */}
+      <button
+        className="home-section-bar study-bar"
+        onClick={() => onNavigate({ type: 'study-select' })}
+      >
+        <span className="review-section-icon">📚</span>
+        <span className="review-section-label">学習モード</span>
+        <span className="review-section-count">問題と解説を読む</span>
+      </button>
+
       {/* Review Banner (spaced repetition) */}
       {dueCards.length > 0 && (
         <button
@@ -137,55 +147,47 @@ export function HomeScreen({ user, questions, onNavigate }: Props) {
                 const qCount = domainQuestionCounts[domain.id] ?? 0;
 
                 return (
-                  <div key={domain.id} className="domain-card-wrapper">
-                    <button
-                      className="domain-card"
-                      onClick={() =>
-                        onNavigate({
-                          type: 'quiz',
-                          domainId: domain.id,
-                          level: 1,
-                        })
-                      }
-                    >
-                      <div className="card-top">
-                        <span className="card-icon">{domain.icon}</span>
-                        <span className="card-badge">{qCount}Q</span>
-                      </div>
-                      <h3 className="card-name">{domain.name}</h3>
-                      <p className="card-desc">{domain.description}</p>
+                  <button
+                    key={domain.id}
+                    className="domain-card"
+                    onClick={() =>
+                      onNavigate({
+                        type: 'quiz',
+                        domainId: domain.id,
+                        level: 1,
+                      })
+                    }
+                  >
+                    <div className="card-top">
+                      <span className="card-icon">{domain.icon}</span>
+                      <span className="card-badge">{qCount}Q</span>
+                    </div>
+                    <h3 className="card-name">{domain.name}</h3>
+                    <p className="card-desc">{domain.description}</p>
 
-                      {(() => {
-                        const domainQs = getQuestionsByDomain(questions, domain.id);
-                        const correctCount = domainQs.filter(
-                          (q) => user.cards[q.id]?.lastQuality === 5,
-                        ).length;
-                        const isComplete = qCount > 0 && correctCount >= qCount;
-                        return (
-                          <div className="card-segments">
-                            <div className="card-segments-bar">
-                              {Array.from({ length: qCount }, (_, i) => (
-                                <span
-                                  key={i}
-                                  className={`card-seg ${i < correctCount ? 'filled' : ''}`}
-                                />
-                              ))}
-                            </div>
-                            <span className={`card-segments-label ${isComplete ? 'complete' : ''}`}>
-                              {isComplete ? 'COMPLETE' : `${correctCount}/${qCount}`}
-                            </span>
+                    {(() => {
+                      const domainQs = getQuestionsByDomain(questions, domain.id);
+                      const correctCount = domainQs.filter(
+                        (q) => user.cards[q.id]?.lastQuality === 5,
+                      ).length;
+                      const isComplete = qCount > 0 && correctCount >= qCount;
+                      return (
+                        <div className="card-segments">
+                          <div className="card-segments-bar">
+                            {Array.from({ length: qCount }, (_, i) => (
+                              <span
+                                key={i}
+                                className={`card-seg ${i < correctCount ? 'filled' : ''}`}
+                              />
+                            ))}
                           </div>
-                        );
-                      })()}
-                    </button>
-                    <button
-                      className="study-mode-btn"
-                      onClick={() => onNavigate({ type: 'study', domainId: domain.id })}
-                      title="学習モード"
-                    >
-                      📚
-                    </button>
-                  </div>
+                          <span className={`card-segments-label ${isComplete ? 'complete' : ''}`}>
+                            {isComplete ? 'COMPLETE' : `${correctCount}/${qCount}`}
+                          </span>
+                        </div>
+                      );
+                    })()}
+                  </button>
                 );
               })}
 
